@@ -192,7 +192,7 @@
     });
     menu.on("click", "#aria2_download", function() {
         MODE = "TXT";
-        CORE.dataBox.init("home");
+        CORE.dataBox.init("home", true);
         // When closing download dialog, cancel all delay feteching.
         CORE.dataBox.onClose(Downloader.reset);
         getSelected();

@@ -390,7 +390,7 @@ var CORE = (function () {
         },
         //文本模式的导出数据框
         dataBox: {
-            init: function (type) {
+            init: function (type, hide_txt_btn) {
                 if ($("#download_ui").length != 0)
                     return this;
                 var download_ui = $("<div>").attr("id", "download_ui").append('<div class="top"><a href="javascript:;" title="关闭" id="aria2_download_close" class="close"></a><h3><em></em>ARIA2导出</h3></div>');
@@ -400,8 +400,10 @@ var CORE = (function () {
                 var download_menu = $("<div>").css({ "margin-bottom": "10px" }).appendTo(content_ui);
                 $("<a>").attr("id", "aria2c_btn").attr({ "download": "aria2c.down", "target": "_blank" }).addClass("save-button ").html('<em class="global-icon-download"></em><b>存为aria2文件</b>').appendTo(download_menu);
                 $("<a>").attr("id", "idm_btn").attr({ "download": "idm.ef2", "target": "_blank" }).addClass("save-button ").html('<em class="global-icon-download"></em><b>存为IDM文件</b>').appendTo(download_menu);
-                $("<a>").attr("id", "download_txt_btn").attr({ "download": "download_link.txt", "target": "_blank" }).addClass("save-button ").html('<em class="global-icon-download"></em><b>保存下载链接</b>').appendTo(download_menu);
-                $("<a>").attr("id", "copy_txt_btn").attr({ "href": "javascript:void(0);", "data": "" }).addClass("save-button ").html('<em class="global-icon-download"></em><b>拷贝下载链接</b>').appendTo(download_menu);
+                if (!hide_txt_btn) {
+                    $("<a>").attr("id", "download_txt_btn").attr({ "download": "download_link.txt", "target": "_blank" }).addClass("save-button ").html('<em class="global-icon-download"></em><b>保存下载链接</b>').appendTo(download_menu);
+                    $("<a>").attr("id", "copy_txt_btn").attr({ "href": "javascript:void(0);", "data": "" }).addClass("save-button ").html('<em class="global-icon-download"></em><b>拷贝下载链接</b>').appendTo(download_menu);
+                }
                 // Disable spellcheck and resize for textarea.
                 $("<textarea>").attr({ "id": "download_link", "wrap": "off", "spellcheck": false }).css({ "width": "100%", "overflow": "scroll", "height": "180px", "resize": "none" }).appendTo(content_ui);
                 CORE.setCenter($("#download_ui"));
