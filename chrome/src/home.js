@@ -30,7 +30,7 @@
         // Paths of folders to be processed.
         var folders = [];
         // { id: path } of files to be processed.
-        var files = {};
+        var files = [];
         var completedCount = 0;
 
         function getNextFile(taskId) {
@@ -62,7 +62,7 @@
                         if (item.isdir)
                             folders.push(item.path);
                         else
-                            files[item.fs_id] = item.path;
+                            files.push(item.path);
                     }
                 }).fail(function(xhr) {
                     CORE.showToast("网络请求失败", "MODE_FAILURE");
@@ -87,8 +87,8 @@
             folders.push(path);
         };
 
-        downloader.addFile = function(id, path) {
-            files[id] = path;
+        downloader.addFile = function(path) {
+            files.push(path);
         };
 
         downloader.start = function() {
@@ -100,7 +100,7 @@
         downloader.reset = function() {
             currentTaskId = 0;
             folders = [];
-            files = {};
+            files = [];
             completedCount = 0;
         };
 
@@ -110,42 +110,20 @@
     var sign = btoa(new Function("return " + yunData.sign2)()(yunData.sign3, yunData.sign1));
 
     function setFileData(files) {
-        $.get(window.location.origin + "/api/download", {
-            "type": "dlink",
-            "bdstoken": yunData.MYBDSTOKEN,
-            "fidlist": JSON.stringify(Object.keys(files)),
-            "timestamp": yunData.timestamp,
-            "sign": sign, 
-            "channel": "chunlei",
-            "clienttype": 0,
-            "web": 1,
-            "app_id": 250528
-        }, null, "json").done(function(json) {
-            if (json.errno != 0) {
-                CORE.showToast("未知错误", "MODE_FAILURE");
-                console.log(json);
-                return;
-            }
+        var file_list = [];
+        for (var i = 0; i < files.length; i++) {
+            file_list.push({ name: files[i].substr(pathPrefixLength), link: "https://d.pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=250528&path=" + encodeURIComponent(files[i]) });
+        }
 
-            var file_list = [];
-            for (var i = 0; i < json.dlink.length; i++) {
-                var item = json.dlink[i];
-                var path = files[item.fs_id];
-                file_list.push({ name: path.substr(pathPrefixLength), link: item.dlink });
-            }
+        if (MODE == "TXT") {
+            CORE.dataBox.show();
+            CORE.dataBox.fillData(file_list);
+        } else {
+            var paths = CORE.parseAuth(RPC_PATH);
+            var rpc_list = CORE.aria2Data(file_list, paths[0], paths[2]);
+            generateParameter(rpc_list);
+        }
 
-            if (MODE == "TXT") {
-                CORE.dataBox.show();
-                CORE.dataBox.fillData(file_list);
-            } else {
-                var paths = CORE.parseAuth(RPC_PATH);
-                var rpc_list = CORE.aria2Data(file_list, paths[0], paths[2]);
-                generateParameter(rpc_list);
-            }
-        }).fail(function(xhr) {
-            CORE.showToast("网络请求失败", "MODE_FAILURE");
-            console.log(JSON.stringify(xhr));
-        });
     }
 
     window.addEventListener("message", function(event) {
@@ -166,7 +144,7 @@
                 if (item.isdir)
                     Downloader.addFolder(item.path);
                 else
-                    Downloader.addFile(item.fs_id, item.path);
+                    Downloader.addFile(item.path);
             }
 
             Downloader.start();
