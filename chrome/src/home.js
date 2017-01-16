@@ -112,7 +112,7 @@
     function setFileData(files) {
         var file_list = [];
         for (var i = 0; i < files.length; i++) {
-            file_list.push({ name: files[i].substr(pathPrefixLength), link: "https://d.pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=250528&path=" + encodeURIComponent(files[i]) });
+            file_list.push({ name: files[i].substr(pathPrefixLength), link: "https://pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=250528&path=" + encodeURIComponent(files[i]) });
         }
 
         if (MODE == "TXT") {
