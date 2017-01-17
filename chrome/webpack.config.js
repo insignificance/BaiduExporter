@@ -1,6 +1,4 @@
 var webpack = require('webpack');
-var path = require('path');
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 module.exports = {
 	context: __dirname + '/src',
 	entry: {
@@ -11,10 +9,10 @@ module.exports = {
 		inject: './inject.js'
 	},
 	output: {
-		path: __dirname + '/js',
+		path: __dirname + '/BaiduExporter/js',
 		filename: '[name].js' // 为上面entry的key值
 	},
 	plugins: [
-		// new webpack.optimize.UglifyJsPlugin(),
+		new webpack.optimize.UglifyJsPlugin(),
 	],
 };
