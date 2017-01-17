@@ -31,7 +31,8 @@ var CORE = (function () {
 		},
 		//调整元素的位置使元素居中
 		setCenter: function (obj) {
-			var screenWidth = $(window).width(), screenHeight = $(window).height();
+			var screenWidth = $(window).width(),
+				screenHeight = $(window).height();
 			var scrolltop = $(document).scrollTop();
 			var objLeft = (screenWidth - obj.width()) / 2;
 			var objTop = (screenHeight - obj.height()) / 2 + scrolltop;
@@ -365,11 +366,14 @@ var CORE = (function () {
 						"jsonrpc": "2.0",
 						"method": "aria2.addUri",
 						"id": new Date().getTime(),
-						"params": [[file_list[i].link], {
-							"out": file_list[i].name,
-							"dir": localStorage.getItem("rpc_dir") || null,
-							"header": self.getHeader()
-						}]
+						"params": [
+							[file_list[i].link],
+							{
+								"out": file_list[i].name,
+								"dir": localStorage.getItem("rpc_dir") || null,
+								"header": self.getHeader()
+							}
+						]
 					};
 					console.log(options);
 					if (options.length > 0) {
@@ -425,14 +429,14 @@ var CORE = (function () {
 
 				// Edge does support `a[download]`, but it ignores the file name, so use `msSaveBlob()` instead
 				if (navigator.msSaveBlob) {
-					$("#aria2c_btn, #idm_btn, #download_txt_btn").click(function (e) {
-						e.preventDefault();
-
+					$("#aria2c_btn, #idm_btn, #download_txt_btn").data("href", "").click(function (e) {
 						var $this = $(this);
-						navigator.msSaveBlob(new Blob([$this.data("href")]), $this.attr("download"));
+
+						var s = document.createElement("script");
+						s.textContent = 'navigator.msSaveBlob(new Blob(["' + $this.data("href").replace(/\r/g, "\\r").replace(/\n/g, "\\n") + '"]), "' + $this.attr("download") + '")';
+						document.body.appendChild(s);
 					});
-				}
-				else {
+				} else {
 					$("#aria2c_btn, #idm_btn, #download_txt_btn").attr("href", "data:text/plain;charset=utf-8,");
 				}
 			},
@@ -477,8 +481,7 @@ var CORE = (function () {
 						$("#aria2c_btn").data("href", $("#aria2c_btn").data("href") + aria2c_txt.join(""));
 						$("#idm_btn").data("href", $("#idm_btn").data("href") + idm_txt.join(""));
 						$("#download_txt_btn").data("href", $("#download_txt_btn").data("href") + down_txt.join(""));
-					}
-					else {
+					} else {
 						$("#aria2c_btn").attr("href", $("#aria2c_btn").attr("href") + encodeURIComponent(aria2c_txt.join("")));
 						$("#idm_btn").attr("href", $("#idm_btn").attr("href") + encodeURIComponent(idm_txt.join("")));
 						$("#download_txt_btn").attr("href", $("#download_txt_btn").attr("href") + encodeURIComponent(down_txt.join("")));
